@@ -89,6 +89,20 @@ objects = cmd.get_object_list()
 print("Objects: " + str(objects))
 ```
 
+### Enable/Disable Objects
+
+```python
+cmd.disable("object_name")  # Hide without changing representations
+cmd.enable("object_name")   # Show again
+cmd.toggle("object_name")   # Toggle visibility
+```
+
+### Show As (Hide Others)
+
+```python
+cmd.show_as("sticks", "selection")  # Show sticks, hide other reps
+```
+
 ## Working with Chains
 
 ### Get Chain IDs
@@ -710,6 +724,14 @@ cmd.set_color("light_gray", [0.8, 0.8, 0.8])
 cmd.set_color("dark_gray", [0.4, 0.4, 0.4])
 cmd.set_color("light_blue", [0.6, 0.8, 1.0])
 cmd.set_color("coral", [1.0, 0.5, 0.31])
+```
+
+### Representation-Specific Colors
+
+```python
+cmd.set("stick_color", "gray", "selection")
+cmd.set("cartoon_color", "green", "selection")
+cmd.set("sphere_color", "red", "selection")
 ```
 
 ---
