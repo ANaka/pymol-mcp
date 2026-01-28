@@ -178,6 +178,21 @@ residues = []
 cmd.iterate("protein and name CA", "residues.append(int(resi))",
             space={"residues": residues})
 print("Range: " + str(min(residues)) + "-" + str(max(residues)))
+```
+
+### Select by Sequence Motif
+
+```python
+# pepseq uses single-letter amino acid codes
+cmd.select("motif", "pepseq KTL")  # Find KTL tripeptide
+cmd.select("leucines", "pepseq L")  # Find all leucines
+```
+
+### Select Bonded Neighbors
+
+```python
+cmd.select("neighbors", "neighbor resi 30 and name CA")
+cmd.select("bonded", "bound_to resi 30 and name CA")
 
 ### Around vs Within
 
