@@ -55,6 +55,28 @@ Claude Desktop config (`claude_desktop_config.json`):
 }
 ```
 
+## Claude Code Workflow
+
+This project supports direct communication from Claude Code to PyMOL (no MCP server needed).
+
+**First-time setup:** Run `/pymol-setup` or ask Claude to set up PyMOL.
+
+**Starting a session:** Say "open PyMOL" or "load <structure>". Claude will launch PyMOL if needed.
+
+**Architecture:**
+```
+Claude Code → TCP Socket (9876) → PyMOL Plugin
+```
+
+**Key files:**
+- `claude_socket_plugin.py` - Headless PyMOL plugin (auto-loads via pymolrc)
+- `pymol_connection.py` - Python module for socket communication
+
+**PyMOL commands (run in PyMOL console):**
+- `claude_status` - Check if listener is running
+- `claude_stop` - Stop listener
+- `claude_start` - Start listener
+
 ## Development Goals
 
 A main goal of this project is to build out a good set of skills for Claude to interact with PyMOL. When you learn something important about PyMOL commands, common workflows, or useful patterns, consider adding it as a skill.
