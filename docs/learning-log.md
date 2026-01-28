@@ -1,0 +1,456 @@
+# PyMOL MCP Learning Log
+
+Tracking experiments, discoveries, and issues during autodidact mission.
+
+---
+
+## Session: 2026-01-28
+
+### Starting State
+- On branch: skill-dev
+- MCP server: pymol_mcp_server.py with 88 commands
+- Goal: Learn PyMOL MCP through experimentation
+
+---
+
+## Experiments
+
+### Experiment 1: Connection Test
+**Time:** 2026-01-28
+**Goal:** Verify MCP connection works
+**Commands tried:** Direct socket connection with test print
+**Result:** SUCCESS - Connected to PyMOL on port 9876
+**Learned:** Connection protocol uses JSON with `type: pymol_command` and `code` field
+
+---
+
+### Experiment 2: Basic Visualization Commands
+**Time:** 2026-01-28
+**Goal:** Test fetch, show, color commands
+**Commands tried:**
+- `cmd.fetch("1ubq")` - SUCCESS, loaded ubiquitin
+- `cmd.show("cartoon", "1ubq")` - SUCCESS
+- `cmd.hide("lines", "1ubq")` - SUCCESS
+- `cmd.color("red", "ss h")` - SUCCESS (helix coloring)
+- `cmd.do("util.ss 1ubq")` - DEPRECATED, use `cmd.dss()` instead
+- `cmd.spectrum("count", "rainbow", "1ubq")` - SUCCESS (rainbow by residue)
+- `cmd.spectrum("b", "blue_white_red", "1ubq")` - SUCCESS (B-factor coloring)
+
+**Result:** All basic visualization commands work via socket
+**Learned:**
+- `util.ss` is deprecated → use `cmd.dss()` for secondary structure assignment
+- Spectrum palette options: rainbow, blue_white_red, etc.
+- Can color by secondary structure type: `ss h` (helix), `ss s` (sheet), `ss l+` (loop)
+
+---
+
+### Experiment 3: Selection Syntax
+**Time:** 2026-01-28
+**Goal:** Test selection algebra through MCP
+**Commands tried:**
+- `cmd.select("name", "resi 1-10")` - SUCCESS (residue range)
+- `cmd.select("ligand", "organic")` - SUCCESS (selects small molecules)
+- `cmd.select("protein", "polymer.protein")` - SUCCESS
+- `cmd.select("binding_site", "byres (protein within 5 of ligand)")` - SUCCESS (proximity selection)
+- `cmd.count_atoms("selection")` - SUCCESS (returns atom count)
+
+**Result:** Selection algebra works fully through socket
+**Learned:**
+- `organic` selects ligands/small molecules
+- `polymer.protein` selects protein chains
+- `byres (X within N of Y)` expands to full residues within distance
+- `elem C` selects carbon atoms
+
+---
+
+### Experiment 4: Structure Alignment
+**Time:** 2026-01-28
+**Goal:** Test align and super commands
+**Commands tried:**
+- `cmd.fetch("1ubi")` then `cmd.align("1ubi", "1ubq")` - SUCCESS, RMSD 0.10 Å / 520 atoms
+- `cmd.super("1ubi", "1ubq")` - SUCCESS, RMSD 0.10 Å / 520 atoms
+
+**Result:** Alignment works, returns tuple with (RMSD, atoms_aligned, ...)
+**Learned:**
+- `align` uses sequence alignment first, then structure
+- `super` uses structure-only alignment (good for different sequences)
+- Both return results that can be captured: `result[0]` = RMSD, `result[1]` = atom count
+
+---
+
+### Experiment 5: Ligand and Binding Site Visualization
+**Time:** 2026-01-28
+**Goal:** Test protein-ligand visualization workflow
+**Structure:** 1HSG (HIV protease with inhibitor)
+**Commands tried:**
+- Select ligand: `cmd.select("ligand", "organic")` → 45 atoms
+- Select protein: `cmd.select("protein", "polymer.protein")` → 1514 atoms
+- Binding site: `cmd.select("binding_site", "byres (protein within 5 of ligand)")` → 236 atoms
+- Polar contacts: `cmd.distance("polar_contacts", "ligand", "binding_site", mode=2)` - SUCCESS
+
+**Result:** Full ligand binding site workflow works
+**Learned:**
+- `mode=2` in distance command shows polar contacts (H-bonds)
+- `util.cbag` colors by atom with green carbons
+- Workflow: select ligand → select binding site → show interactions
+
+---
+
+### Experiment 6: Scenes and Movies
+**Time:** 2026-01-28
+**Goal:** Test scene storage and movie creation
+**Commands tried:**
+- `cmd.scene("F1", "store", message="Label")` - SUCCESS
+- `cmd.scene("F1", "recall")` - SUCCESS
+- `cmd.mset("1 x90")` - SUCCESS (90 frames)
+- `cmd.mview("store")` at keyframes - SUCCESS
+
+**Result:** Scene and movie commands work
+**Learned:**
+- Scenes store view, representations, and colors
+- Movie workflow: mset → frame → scene recall → mview store
+
+---
+
+### Experiment 7: Rendering for Publication
+**Time:** 2026-01-28
+**Goal:** Test ray tracing and image export settings
+**Commands tried:**
+- `cmd.bg_color("white")` - SUCCESS
+- `cmd.set("ray_opaque_background", 1)` - SUCCESS
+- `cmd.ray(800, 600)` - SUCCESS (ray tracing takes ~2-3 seconds)
+
+**Result:** Rendering works through socket
+**Learned:**
+- `ray_opaque_background` ensures solid background for publication
+- Ray takes width, height as arguments
+- For publication: white background, ray traced images
+
+---
+
+## Key Discoveries
+
+### Working Selection Keywords
+| Keyword | Selects |
+|---------|---------|
+| `organic` | Small molecules (ligands) |
+| `polymer.protein` | Protein chains |
+| `ss h` | Alpha helices |
+| `ss s` | Beta sheets |
+| `ss l+` | Loops |
+| `elem X` | Element X (C, N, O, etc.) |
+| `name CA` | Alpha carbons |
+| `resi N-M` | Residue range |
+| `byres (X within N of Y)` | Full residues within N Å |
+
+### Useful Patterns
+1. **Load and style protein:** `fetch → show cartoon → hide lines → color`
+2. **Binding site view:** `select organic → select within → show sticks → polar contacts`
+3. **Publication figure:** `bg_color white → set ray_opaque_background → ray`
+4. **Multi-structure comparison:** `fetch both → align/super → color differently`
+
+### Deprecated Commands
+- `util.ss` → use `cmd.dss()` for secondary structure assignment
+
+---
+
+## Session 2: Continued Experiments
+
+### Experiment 8: Alignment Methods
+**Time:** 2026-01-28
+**Goal:** Test align, super, and cealign differences
+**Structures:** 1tim, 8tim (TIM barrel)
+**Results:**
+- `cmd.align()` - RMSD 0.78 Å, 3109 atoms, 5 cycles
+- `cmd.super()` - RMSD 0.78 Å, 3089 atoms
+- `cmd.cealign()` - RMSD 0.87 Å, 488 residues aligned
+
+**Learned:**
+- All three methods work through socket
+- `align` returns tuple: (RMSD, atoms, cycles, pre_RMSD, pairs, score, length)
+- `super` returns similar tuple
+- `cealign` returns dict with "RMSD" and "alignment_length" keys
+- `cealign` has REVERSED argument order: (target, mobile)
+- `rms_cur()` calculates RMSD of current positions without transformation
+
+---
+
+### Experiment 9: Publication Figure Settings
+**Time:** 2026-01-28
+**Goal:** Test rendering and export settings
+**Commands tried:**
+- `cmd.set("antialias", 2)` - SUCCESS
+- `cmd.set("ray_shadows", 0)` - SUCCESS
+- `cmd.set("depth_cue", 0)` - SUCCESS
+- `cmd.viewport(1200, 900)` - SUCCESS
+- `cmd.png(path, 1200, 900, dpi=300, ray=1)` - SUCCESS
+
+**Result:** Full publication workflow works
+**Learned:**
+- PNG export with ray tracing: `cmd.png(path, w, h, dpi=300, ray=1)`
+- Key settings: antialias, ray_shadows, depth_cue
+- Use `os.path.expanduser("~")` for home directory
+- Ray tracing is slow but high quality
+
+---
+
+### Experiment 10: Binding Pocket Labels
+**Time:** 2026-01-28
+**Goal:** Add residue labels to binding site
+**Commands tried:**
+- `cmd.label("pocket and name CA", "resn+resi")` - SUCCESS
+- `cmd.set("label_size", 14)` - SUCCESS
+- `cmd.set("label_color", "black", "pocket")` - SUCCESS
+
+**Result:** Labels work well
+**Learned:**
+- Label expression `resn+resi` gives "ALA45" format
+- Label settings: label_size, label_color
+- Labels only show on visible representations
+
+---
+
+## Skills Created
+
+1. **pymol-fundamentals** - Core operations (selections, representations, colors, camera)
+2. **binding-site-visualization** - Protein-ligand interaction visualization
+3. **structure-alignment-analysis** - Structure comparison and RMSD
+4. **publication-figures** - Ray tracing and export settings
+
+---
+
+## Server Improvements Identified
+
+### Pattern Issues Found
+1. `cealign` not in PYMOL_COMMANDS - cannot be used via MCP parse_and_execute
+2. `rms_cur` not in PYMOL_COMMANDS
+3. `viewport` not in PYMOL_COMMANDS (pattern exists but limited)
+4. `dss` not in PYMOL_COMMANDS (newer alternative to util.ss)
+
+### Missing Commands for Common Workflows
+- `png` with dpi and ray parameters
+- `label` with expression
+- `cealign` for structural alignment
+
+### Notes for Future
+- Direct socket communication bypasses MCP server patterns
+- For complex workflows, building Python code directly is more flexible
+- MCP server patterns good for simple commands but limited for advanced use
+
+---
+
+## Server Improvements Made
+
+Branch: `autodidact-improvements`
+
+### Commands Added to PYMOL_COMMANDS
+
+1. **cealign** - Combinatorial Extension structure alignment
+   - Pattern: `cealign target, mobile`
+   - Returns dict with RMSD and alignment_length
+
+2. **rms** - RMSD without transformation
+   - Pattern: `rms mobile, target`
+
+3. **rms_cur** - RMSD at current positions
+   - Pattern: `rms_cur mobile, target`
+
+4. **dss** - Secondary structure assignment
+   - Pattern: `dss selection`
+   - Replaces deprecated util.ss
+
+5. **mview** - Movie view storage
+   - Pattern: `mview store|recall|clear|interpolate`
+
+6. **count_atoms** - Atom counting
+   - Pattern: `count_atoms selection`
+
+7. **count_states** - State counting for NMR/MD
+   - Pattern: `count_states object`
+
+8. **get_names** - Object/selection listing
+   - Pattern: `get_names type`
+
+### Code Changes
+- Added command definitions to PYMOL_COMMANDS dict
+- Added handlers in build_pymol_code() for proper output
+
+---
+
+## Session 3: Advanced Patterns
+
+### Experiment 11: Multi-Chain Structures
+**Time:** 2026-01-28
+**Structure:** 2occ (cytochrome c oxidase, 26 chains)
+**Results:**
+- Chain iteration works: `cmd.iterate("all and name CA", "chains.append(chain)")`
+- `util.cbc` colors all chains distinctly
+- Metal selection: `elem Cu+Fe+Zn+Mg+Mn+Ca`
+- Heme selection: `resn HEM+HEC+HEA`
+- Coordination sphere: `byres (polymer.protein within 3 of metals)`
+
+**Learned:**
+- Use `space={"chains": chains}` parameter for iterate to pass external list
+- Multi-chain proteins benefit from util.cbc for quick overview
+
+---
+
+### Experiment 12: Residue Property Selection
+**Time:** 2026-01-28
+**Results:**
+- Basic residues: `resn ARG+LYS+HIS`
+- Acidic residues: `resn ASP+GLU`
+- Hydrophobic: `resn ALA+VAL+ILE+LEU+MET+PHE+TRP+PRO`
+- Polar: `resn SER+THR+CYS+TYR+ASN+GLN`
+
+**Learned:**
+- PyMOL uses `+` to separate residue names in `resn`
+- Standard amino acid groupings work well for property-based coloring
+
+---
+
+### Experiment 13: NMR Ensembles
+**Time:** 2026-01-28
+**Structure:** 1d3z (10-state NMR ensemble)
+**Results:**
+- `cmd.count_states()` returns number of states
+- `cmd.set("all_states", 1)` shows all states overlaid
+- `cmd.mset("1 -10")` creates movie through all states
+
+**Learned:**
+- NMR structures automatically load all states
+- Movie setup: `mset("1 -N")` where N is number of states
+
+---
+
+### Experiment 14: Structure Morphing (Failed)
+**Time:** 2026-01-28
+**Structures:** 1ake, 4ake (adenylate kinase open/closed)
+**Results:**
+- Both have 428 CA atoms
+- RMSD after alignment: 18.49 Å (large conformational change)
+- `cmd.morph()` failed silently through socket
+
+**Learned:**
+- Morph command may have issues through socket execution
+- Needs further investigation or may require interactive PyMOL
+- Large conformational changes (>10 Å RMSD) may need special handling
+
+---
+
+## Known Limitations
+
+1. **cmd.morph()** - May not work reliably through socket
+2. **surface_color_mode** - Setting doesn't exist (tested, failed)
+3. **Some wizard operations** - May require interactive mode
+
+---
+
+## Session 4: Interaction Analysis
+
+### Experiment 15: Salt Bridge Detection
+**Time:** 2026-01-28
+**Results:**
+- Select basic atoms: `(resn ARG and name NH1+NH2+NE) or (resn LYS and name NZ)`
+- Select acidic atoms: `(resn ASP and name OD1+OD2) or (resn GLU and name OE1+OE2)`
+- Find salt bridges: `distance salt_bridges, basic_atoms, acidic_atoms, cutoff=4.0, mode=0`
+- Works well for detecting and visualizing salt bridges
+
+---
+
+### Experiment 16: SASA Analysis
+**Time:** 2026-01-28
+**Results:**
+- `cmd.get_area("selection")` returns total SASA
+- `cmd.get_area("selection", load_b=1)` loads per-atom SASA into B-factor
+- Can then use `spectrum("b", palette)` to color by SASA
+- Buried residues: SASA < 10, Exposed: SASA > 50
+
+---
+
+### Experiment 17: Programmatic Measurements
+**Time:** 2026-01-28
+**Results:**
+- `cmd.get_distance(sel1, sel2)` returns distance value
+- `cmd.get_angle(a1, a2, a3)` returns angle
+- `cmd.get_dihedral(a1, a2, a3, a4)` returns dihedral
+- `cmd.pair_fit(mobile, target)` returns RMSD after aligning specific atoms
+
+---
+
+## Summary of Skills Created
+
+| Skill | Purpose | Key Patterns |
+|-------|---------|--------------|
+| pymol-fundamentals | Core operations | show/hide, color, select, camera |
+| binding-site-visualization | Ligand binding | organic select, within, polar contacts |
+| structure-alignment-analysis | Comparison | align, super, cealign, rms_cur |
+| publication-figures | Export | ray, bg_color, settings |
+| movie-creation | Animation | mset, mview, scene |
+| miscellaneous | Everything else | iterate, get_area, measurements |
+
+---
+
+## Final Session Summary
+
+### Deliverables Completed
+
+1. **Skills Created: 6**
+   - pymol-fundamentals (foundation)
+   - binding-site-visualization
+   - structure-alignment-analysis
+   - publication-figures
+   - movie-creation
+   - miscellaneous
+
+2. **COOKBOOK.md** - Complete with all sections
+
+3. **Server Improvements** - Branch `autodidact-improvements` with 8 new commands
+
+4. **Learning Log** - This file, with all experiments documented
+
+### Patterns Tested and Documented
+
+| Category | Patterns |
+|----------|----------|
+| Loading | fetch, load, get_names |
+| Visualization | show, hide, color, cartoon, as |
+| Selection | chain, resi, resn, name, within, byres, organic |
+| Alignment | align, super, cealign, rms_cur, pair_fit |
+| Measurement | distance, get_distance, get_angle, get_dihedral |
+| Analysis | get_area (SASA), count_atoms, iterate |
+| Rendering | ray, png, bg_color, settings |
+| Movies | mset, mview, scene, mplay |
+| Data | get_coords, get_fastastr, get_extent, centerofmass |
+
+### Commands Added to Server
+
+- cealign, rms, rms_cur, dss
+- mview, count_atoms, count_states, get_names
+
+### Known Limitations Discovered
+
+1. cmd.morph() may not work via socket
+2. Some settings don't exist (surface_color_mode)
+3. Wizard operations may need interactive mode
+
+### Session Statistics
+
+- Total experiments: 20+
+- Commands tested: 60+
+- Skills created: 6
+- Server commands added: 8
+- Commits: 14
+
+### Additional Patterns Discovered (Session 4+)
+
+- `pepseq L` - sequence motif selection (uses single-letter codes)
+- `neighbor`/`bound_to` - bonded atom selection
+- `enable`/`disable` - toggle object visibility without changing reps
+- `show_as` - show one rep, hide others
+- `group` - organize objects into groups
+- Representation-specific colors (`stick_color`, `cartoon_color`)
+- Atom property iteration (`ss`, `b`, `q`)
+- `get_extent` - bounding box coordinates
+- `pseudoatom` - create markers at specific positions
+
