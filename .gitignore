@@ -109,4 +109,5 @@ dmypy.json
 # uv
 .uv/
 settings.json
-.mcp.json
+.mcp.json*.cif
+*.pdb
