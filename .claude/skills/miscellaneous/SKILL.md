@@ -62,6 +62,33 @@ cmd.delete("all")
 cmd.reset()
 ```
 
+## Object Manipulation
+
+### Copy Object
+
+```python
+cmd.copy("new_name", "source_object")
+```
+
+### Translate Object
+
+```python
+cmd.translate([10, 0, 0], "object_name")  # Move 10 A along X
+```
+
+### Rotate Object
+
+```python
+cmd.rotate("y", 45, "object_name")  # Rotate 45 degrees around Y
+```
+
+### Get Object List
+
+```python
+objects = cmd.get_object_list()
+print("Objects: " + str(objects))
+```
+
 ## Working with Chains
 
 ### Get Chain IDs
@@ -626,6 +653,27 @@ print("Box dimensions: " + str([round(s, 1) for s in size]))
 extent = cmd.get_extent("selection")
 center = [(extent[0][i] + extent[1][i]) / 2 for i in range(3)]
 print("Box center: " + str([round(c, 1) for c in center]))
+```
+
+---
+
+## Custom Colors
+
+### Define Custom Color
+
+```python
+cmd.set_color("my_color", [0.5, 0.8, 0.3])  # RGB 0-1
+cmd.color("my_color", "selection")
+```
+
+### Common Custom Colors
+
+```python
+# Define useful colors
+cmd.set_color("light_gray", [0.8, 0.8, 0.8])
+cmd.set_color("dark_gray", [0.4, 0.4, 0.4])
+cmd.set_color("light_blue", [0.6, 0.8, 1.0])
+cmd.set_color("coral", [1.0, 0.5, 0.31])
 ```
 
 ---
