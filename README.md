@@ -1,4 +1,4 @@
-# PyMOL-MCP: Control PyMOL with Claude Code
+# ai-mol: Control PyMOL with Claude Code
 
 Control PyMOL through natural language using Claude Code. This integration enables conversational structural biology, molecular visualization, and analysis.
 
@@ -30,8 +30,8 @@ Claude Code → TCP Socket (port 9876) → PyMOL Plugin → cmd.* execution
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/ANaka/pymol-mcp
-   cd pymol-mcp
+   git clone https://github.com/ANaka/ai-mol
+   cd ai-mol
    ```
 
 2. **Set up the PyMOL plugin:**
@@ -39,14 +39,14 @@ Claude Code → TCP Socket (port 9876) → PyMOL Plugin → cmd.* execution
    Add this line to your `~/.pymolrc` (create it if it doesn't exist):
 
    ```python
-   run /path/to/pymol-mcp/claude_socket_plugin.py
+   run /path/to/ai-mol/claude_socket_plugin.py
    ```
 
-   Replace `/path/to/pymol-mcp` with the actual path where you cloned the repository.
+   Replace `/path/to/ai-mol` with the actual path where you cloned the repository.
 
 3. **Start using it:**
 
-   Open Claude Code in the `pymol-mcp` directory and say:
+   Open Claude Code in the `ai-mol` directory and say:
 
    > "Open PyMOL and load structure 1UBQ"
 

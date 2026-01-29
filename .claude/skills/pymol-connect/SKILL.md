@@ -15,7 +15,7 @@ When user wants to work with PyMOL (e.g., "open PyMOL", "load 1abc.pdb", "show m
 
 ```python
 import sys
-sys.path.insert(0, '/path/to/pymol-mcp')  # Use actual repo path
+sys.path.insert(0, '/path/to/ai-mol')  # Use actual repo path
 from pymol_connection import PyMOLConnection
 
 conn = PyMOLConnection()

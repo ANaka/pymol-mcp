@@ -139,7 +139,7 @@ The plugin path is: `<this-repo>/claude_socket_plugin.py`
 Append to the file:
 ```python
 # Claude Code socket plugin
-run /absolute/path/to/pymol-mcp/claude_socket_plugin.py
+run /absolute/path/to/ai-mol/claude_socket_plugin.py
 ```
 
 ### If no pymolrc exists (or only ~/.pymolrc)
@@ -147,7 +147,7 @@ run /absolute/path/to/pymol-mcp/claude_socket_plugin.py
 Create or append to `~/.pymolrc`:
 ```
 # Claude Code socket plugin
-run /absolute/path/to/pymol-mcp/claude_socket_plugin.py
+run /absolute/path/to/ai-mol/claude_socket_plugin.py
 ```
 
 **Important:** Use the actual absolute path to `claude_socket_plugin.py` in this repository.
@@ -171,7 +171,7 @@ Wait a few seconds for startup, then test connection using the Python module in 
 
 ```python
 import sys
-sys.path.insert(0, '/path/to/pymol-mcp')
+sys.path.insert(0, '/path/to/ai-mol')
 from pymol_connection import PyMOLConnection
 
 conn = PyMOLConnection()

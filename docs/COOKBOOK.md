@@ -1,14 +1,14 @@
 # PyMOL + Claude Cookbook
 
-A task-oriented guide to what Claude can do with PyMOL through the MCP integration.
+A task-oriented guide to what Claude can do with PyMOL through ai-mol.
 
 ## Quick Start
 
 ### Connecting PyMOL to Claude
 
-1. Install the PyMOL plugin from `pymol-mcp-socket-plugin/`
-2. In PyMOL, start the MCP listener (Plugin menu → MCP Socket → Start)
-3. Configure Claude Desktop with the MCP server path
+1. Add the socket plugin to your `~/.pymolrc`: `run /path/to/ai-mol/claude_socket_plugin.py`
+2. Launch PyMOL - the plugin auto-starts
+3. In Claude Code, say "open PyMOL" or load a structure directly
 4. You're ready to go!
 
 ### Your First Visualization

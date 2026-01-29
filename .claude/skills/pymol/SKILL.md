@@ -9,7 +9,7 @@ Launch PyMOL with Claude socket plugin and establish connection.
 
 ## Execution
 
-Run from the pymol-mcp repo root:
+Run from the ai-mol repo root:
 
 ```bash
 python launch_pymol.py
