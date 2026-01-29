@@ -185,6 +185,70 @@ cmd.zoom("lig", 6)
 cmd.bg_color("white")
 ```
 
+## Publication-Quality Figures
+
+### Settings for Print/Publication
+
+```python
+# Anti-aliasing
+cmd.set("antialias", 2)
+
+# Clean ray-trace mode
+cmd.set("ray_trace_mode", 1)
+cmd.set("ray_shadows", 0)
+cmd.set("depth_cue", 0)
+cmd.set("spec_reflect", 0.2)
+cmd.set("ambient", 0.5)
+
+# Transparent protein cartoon
+cmd.set("cartoon_transparency", 0.3)
+
+# White background
+cmd.bg_color("white")
+```
+
+### Two-Figure Strategy
+
+Always create BOTH overview and detail figures:
+
+**Overview Figure** - Shows binding site in protein context:
+```python
+cmd.center("ligand")
+cmd.zoom("ligand", buffer=12)
+cmd.ray(1200, 900)
+cmd.png("binding_overview.png", dpi=300)
+```
+
+**Detail Figure** - Close-up of interactions:
+```python
+cmd.zoom("ligand", buffer=5)
+cmd.ray(1200, 900)
+cmd.png("binding_detail.png", dpi=300)
+```
+
+### Key Residue Highlighting
+
+Highlight biologically important residues with distinct colors:
+
+```python
+# Example: kinase inhibitor binding
+cmd.select("gatekeeper", "resi 529")  # Gatekeeper residue
+cmd.color("tv_blue", "gatekeeper and elem C")
+
+cmd.select("mutation", "resi 600")  # V600E mutation site
+cmd.color("salmon", "mutation and elem C")
+```
+
+### H-Bond Styling for Figures
+
+```python
+cmd.distance("hbonds", "ligand", "pocket", mode=2)
+cmd.set("dash_color", "yellow", "hbonds")
+cmd.set("dash_gap", 0.3, "hbonds")
+cmd.set("dash_width", 2.0, "hbonds")
+cmd.hide("labels", "hbonds")  # Remove distance labels for cleaner figure
+```
+
 ## Tips
 
 - `organic` is the reliable selector for ligands
@@ -193,3 +257,5 @@ cmd.bg_color("white")
 - `mode=2` in distance shows polar contacts only
 - White carbons (`util.cbaw`) for pocket, colored carbons for ligand helps distinguish
 - Gray protein cartoon keeps focus on binding site
+- **Always ray-trace for publication** - OpenGL is for exploration only
+- **Multiple views tell a complete story** - don't settle for just one angle
