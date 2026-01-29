@@ -9,21 +9,24 @@ ai-mol integrates PyMOL (molecular visualization software) with Claude Code. It 
 ## Architecture
 
 ```
-Claude Code → TCP Socket (port 9876) → PyMOL Plugin → cmd.* execution
+Claude Code → TCP Socket (port 9880) → PyMOL Plugin → cmd.* execution
 ```
 
 **Key components:**
 
 1. **PyMOL Plugin** (`claude_socket_plugin.py`) - Headless socket listener that runs inside PyMOL
    - Auto-loads via `~/.pymolrc`
-   - Accepts TCP connections on localhost:9876
+   - Accepts TCP connections on localhost:9880
    - Executes received Python code via `exec()` with output capture
    - Commands: `claude_status`, `claude_stop`, `claude_start`
 
 2. **Connection Module** (`pymol_connection.py`) - Python module for socket communication
    - `PyMOLConnection` class handles TCP socket communication
-   - Global singleton via `get_pymol_connection()` with auto-reconnect
    - Used by Claude Code to send commands to PyMOL
+
+## Known Issues
+
+**View Inflation Bug (FIXED):** When using `cmd.png(path, width, height)` with explicit dimensions, PyMOL's view matrix can become corrupted after multiple reinitialize cycles. Always use `cmd.ray(width, height)` followed by `cmd.png(path)` without dimensions to prevent this.
 
 ## Claude Code Workflow
 

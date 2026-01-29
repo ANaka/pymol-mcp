@@ -114,6 +114,9 @@ settings.json
 # Structure files (downloaded during sessions)
 *.cif
 *.pdb
+*.pdb1
+*.ccp4
+*.mtz
 
 # Scratch directory for temporary images
 scratch/

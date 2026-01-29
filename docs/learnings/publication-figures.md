@@ -30,9 +30,25 @@ cmd.set("cartoon_fancy_helices", 1)
 cmd.bg_color("white")
 
 # High-resolution output
-cmd.ray(1200, 900)  # or larger
-cmd.png("figure.png", dpi=300)
+# IMPORTANT: Always use ray() THEN png() without dimensions!
+# cmd.png(path, width, height) causes a view inflation bug
+cmd.ray(1200, 900)
+cmd.png("figure.png")  # NO dimensions here - ray() already set them
 ```
+
+## Critical: Avoiding the View Inflation Bug
+
+**DO NOT** use `cmd.png(path, width, height)` with explicit dimensions.
+
+This causes PyMOL's view matrix to become corrupted after multiple cycles, making the view zoom out to infinity.
+
+**ALWAYS** use:
+```python
+cmd.ray(width, height)
+cmd.png(path)  # No dimensions - ray already rendered at the right size
+```
+
+This applies to ALL image captures, not just ray-traced ones.
 
 ## Example: Antibody CDR Loops (Task 38)
 

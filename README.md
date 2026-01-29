@@ -14,7 +14,7 @@ https://github.com/user-attachments/assets/687f43dc-d45e-477e-ac2b-7438e175cb36
 ## Architecture
 
 ```
-Claude Code → TCP Socket (port 9876) → PyMOL Plugin → cmd.* execution
+Claude Code → TCP Socket (port 9880) → PyMOL Plugin → cmd.* execution
 ```
 
 ## Quick Start
@@ -87,8 +87,10 @@ claude_start    # Start the listener
 Claude Code has built-in skills for common workflows:
 
 - **pymol-fundamentals** - Basic visualization, selections, coloring
+- **protein-structure-basics** - Secondary structure, B-factor, representations
 - **binding-site-visualization** - Protein-ligand interactions
 - **structure-alignment-analysis** - Comparing and aligning structures
+- **antibody-visualization** - CDR loops, epitopes, Fab structures
 - **publication-figures** - High-quality figure export
 - **movie-creation** - Animations and rotations
 
@@ -112,7 +114,7 @@ Run the `/pymol-setup` skill in Claude Code for guided setup assistance.
 
 ## Configuration
 
-The default socket port is **9876**. Both the plugin and Claude Code connection module use this port.
+The default socket port is **9880**. Both the plugin and Claude Code connection module use this port.
 
 Key files:
 - `claude_socket_plugin.py` - PyMOL plugin (headless, auto-loads via pymolrc)

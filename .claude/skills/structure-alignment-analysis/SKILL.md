@@ -205,6 +205,59 @@ cmd.bg_color("white")
 | 2.0-3.0 A | Same fold family, significant differences |
 | > 3.0 A | Different conformations or distant homologs |
 
+## Publication-Quality Figures
+
+### Settings for Print
+
+```python
+cmd.bg_color("white")
+cmd.set("ray_shadows", 0)
+cmd.set("spec_reflect", 0.2)
+cmd.set("ambient", 0.5)
+cmd.set("antialias", 2)
+cmd.set("ray_trace_mode", 1)
+cmd.set("cartoon_fancy_helices", 1)
+```
+
+### Multi-View Strategy
+
+Always create multiple views to tell the complete story:
+
+**Overview** - Shows full aligned structures:
+```python
+cmd.orient()
+cmd.ray(1200, 900)
+cmd.png("comparison_overview.png")
+```
+
+**Side View** - Rotated 90° to show depth:
+```python
+cmd.turn("y", 90)
+cmd.ray(1200, 900)
+cmd.png("comparison_side.png")
+```
+
+**Detail View** - Focus on key difference regions:
+```python
+cmd.center("mobile and resi 65-85")  # Hinge region, mutation site, etc.
+cmd.zoom("all and resi 60-90", buffer=8)
+cmd.ray(1200, 900)
+cmd.png("comparison_detail.png")
+```
+
+### Color Schemes for Comparison
+
+Standard two-structure comparison:
+- Structure 1: marine (blue)
+- Structure 2: salmon (pink/orange)
+
+Multi-structure comparison:
+- Reference: green
+- Variants: cyan, magenta, yellow, orange
+
+**IMPORTANT**: Always use `cmd.ray(w, h)` then `cmd.png(path)` without dimensions.
+Using `cmd.png(path, w, h)` causes a view inflation bug.
+
 ## Tips
 
 - Use `align` for closely related proteins
@@ -213,3 +266,4 @@ cmd.bg_color("white")
 - Always report CA RMSD for standardization
 - Color structures distinctly for clarity
 - `rms_cur` calculates RMSD of current positions (after alignment)
+- Multiple views tell a more complete story than a single image

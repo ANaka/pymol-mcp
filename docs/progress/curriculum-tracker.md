@@ -53,8 +53,8 @@ Issues that prevent task completion:
 
 | Issue | Affected Tasks | Resolution |
 |-------|---------------|------------|
-| View inflation bug | All image tasks | cmd.refresh()+sleep(0.5) before png helps, but intermittent |
-| GUI glitch/shrink | User-reported | Possibly related to cmd.zoom()/cmd.center()/cmd.orient() |
+| ~~View inflation bug~~ | ~~All image tasks~~ | **FIXED** - Always use `cmd.ray(w,h)` then `cmd.png(path)` without dimensions |
+| ~~GUI glitch/shrink~~ | ~~User-reported~~ | **FIXED** - Same root cause as view inflation |
 | bound_to selection | Task 17 | Syntax doesn't work in PyMOL 3.x - need alternative |
 | Sequence viewer | Task 18 | Requires GUI interaction, not automatable via socket |
 
@@ -186,3 +186,81 @@ cmd.png(path, width, height)
 2. Structural comparisons
 3. Antibody/immunology
 4. Protein structure basics
+
+### 2026-01-28: View Inflation Bug FIXED (Ralph Loop Session 2)
+
+**Root Cause Identified:**
+`cmd.png(path, width, height)` with explicit dimensions causes PyMOL's internal view matrix Z-distance to become corrupted after multiple reinitialize+fetch cycles. The Z-distance grows exponentially:
+- Cycle 1: Z=-120 (normal)
+- Cycle 2: Z=-132
+- Cycle 3: Z=-266
+- Cycle 4: Z=-51025 (BUG!)
+
+**The Fix:**
+Always use `cmd.ray(width, height)` before `cmd.png(path)` WITHOUT dimensions in the png call. The `ray()` command renders to an offscreen buffer without touching the viewport, preventing the corruption.
+
+**Files Modified:**
+- `pymol_view.py` - Now always uses `cmd.ray()` before `cmd.png()` to prevent view corruption
+
+**Verification:**
+- Tested 10 consecutive reinitialize+fetch+orient+ray+png cycles
+- Z value stays stable at -119.78 across all cycles
+- Images render correctly and consistently
+
+**Status:** Bug fixed. Can resume curriculum work with reliable image capture.
+
+### 2026-01-29: Visualization Category Mastery (Ralph Loop Session 3)
+
+**Focus:** Publication-quality figure mastery by category
+
+**Category 1: Ligand Binding** ✓
+- Created 1HSG (HIV protease) binding site visualization
+- 2 views: overview + detail
+- H-bonds shown with yellow dashes
+- Green ligand, white pocket residues, gray protein
+
+**Category 2: Structural Comparisons** ✓
+- Calmodulin conformational change (1CLL vs 1CFD)
+  - RMSD: 9.55Å - dramatic open/closed conformational change
+  - 3 views: overview, side, hinge detail
+  - Marine vs salmon color scheme
+
+- p53 WT vs R248Q mutant (2OCJ vs 2PCX)
+  - RMSD: 0.42Å - nearly identical (point mutation)
+  - 2 views: overview, mutation site detail
+  - Forest green vs firebrick color scheme
+  - Sticks showing mutation residue
+
+**Category 3: Antibody/Immunology** ✓
+- Trastuzumab (Herceptin) Fab-HER2 complex (1N8Z)
+  - 4 views: overview, paratope, surface, interface detail
+  - CDR loops identified and colored (L1/L2/L3/H1/H2/H3)
+  - Epitope/paratope interface residues shown as sticks
+  - Warm colors for light chain CDRs, cool for heavy chain
+
+**Category 4: Protein Structure Basics** ✓
+- GFP (1EMA) - classic beta-barrel protein
+  - 5 views: secondary structure, B-factor, surface, chromophore, side
+  - Statistics: 235 residues (6.8% helix, 45.5% sheet, 47.7% loop)
+  - B-factor coloring shows rigid barrel, flexible termini
+
+**Skills Created:**
+- `antibody-visualization/SKILL.md` - CDR loops, epitope/paratope, color schemes
+- `protein-structure-basics/SKILL.md` - Representations, coloring, analysis
+
+**Skills Enhanced:**
+- `structure-alignment-analysis/SKILL.md` - Added publication-quality figure guidance
+
+**Summary:** All 4 priority visualization categories completed with publication-quality figures:
+1. Ligand Binding ✓
+2. Structural Comparisons ✓
+3. Antibody/Immunology ✓
+4. Protein Structure Basics ✓
+
+**Phase 3 Progress:**
+- Updated README.md with new skills, correct port (9880)
+- Updated CLAUDE.md with correct port, documented view inflation bug fix
+- Updated .gitignore for additional structure file types (.pdb1, .ccp4, .mtz)
+- Tests: 10/11 passing (1 expected failure for multi-client which plugin doesn't support)
+
+**Next:** Create QUICKSTART.md for 5-minute bootstrap
