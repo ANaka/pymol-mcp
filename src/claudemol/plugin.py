@@ -5,10 +5,10 @@ Headless socket listener that receives Python commands from Claude Code.
 Auto-starts on load, no UI required.
 
 Usage:
-    run /path/to/claude_socket_plugin.py    # Start listening
-    claude_status                            # Check connection status
-    claude_stop                              # Stop listener
-    claude_start                             # Restart listener
+    run /path/to/plugin.py    # Start listening
+    claude_status             # Check connection status
+    claude_stop               # Stop listener
+    claude_start              # Restart listener
 """
 
 import socket

@@ -9,12 +9,11 @@ import os
 import shutil
 import socket
 import subprocess
-import sys
 import time
 from pathlib import Path
 
 DEFAULT_HOST = "localhost"
-DEFAULT_PORT = 9880  # Changed from 9876 due to zombie process holding that port
+DEFAULT_PORT = 9880
 CONNECT_TIMEOUT = 5.0
 RECV_TIMEOUT = 30.0
 
@@ -29,9 +28,6 @@ PYMOL_PATHS = [
     "/usr/bin/pymol",
     "/usr/local/bin/pymol",
 ]
-
-# Flag to indicate we need to use "python -m pymol" instead of direct executable
-_USE_PYTHON_MODULE = False
 
 
 class PyMOLConnection:
@@ -178,6 +174,11 @@ def check_pymol_installed():
     return find_pymol_command() is not None
 
 
+def get_plugin_path():
+    """Get the path to the socket plugin file."""
+    return Path(__file__).parent / "plugin.py"
+
+
 def launch_pymol(file_path=None, wait_for_socket=True, timeout=10.0):
     """
     Launch PyMOL with the Claude socket plugin.
@@ -194,12 +195,12 @@ def launch_pymol(file_path=None, wait_for_socket=True, timeout=10.0):
     if not pymol_cmd:
         raise RuntimeError(
             "PyMOL not found. Please install PyMOL:\n"
-            "  - Run /pymol-setup for guided installation\n"
+            "  - Run: claudemol setup\n"
             "  - Or: pip install pymol-open-source-whl\n"
             "  - Or: brew install pymol (macOS)"
         )
 
-    plugin_path = Path(__file__).parent / "claude_socket_plugin.py"
+    plugin_path = get_plugin_path()
     if not plugin_path.exists():
         raise RuntimeError(f"Plugin not found: {plugin_path}")
 

@@ -1,4 +1,4 @@
-# ai-mol: Control PyMOL with Claude Code
+# claudemol: Control PyMOL with Claude Code
 
 Control PyMOL through natural language using Claude Code. This integration enables conversational structural biology, molecular visualization, and analysis.
 
@@ -27,30 +27,20 @@ Claude Code → TCP Socket (port 9880) → PyMOL Plugin → cmd.* execution
 
 ### Installation
 
-1. **Clone the repository:**
+```bash
+pip install claudemol
+claudemol setup
+```
 
-   ```bash
-   git clone https://github.com/ANaka/ai-mol
-   cd ai-mol
-   ```
+This installs the package and configures PyMOL to auto-load the socket plugin.
 
-2. **Set up the PyMOL plugin:**
+### Start Using It
 
-   Add this line to your `~/.pymolrc` (create it if it doesn't exist):
+Open Claude Code and say:
 
-   ```python
-   run /path/to/ai-mol/claude_socket_plugin.py
-   ```
+> "Open PyMOL and load structure 1UBQ"
 
-   Replace `/path/to/ai-mol` with the actual path where you cloned the repository.
-
-3. **Start using it:**
-
-   Open Claude Code in the `ai-mol` directory and say:
-
-   > "Open PyMOL and load structure 1UBQ"
-
-   Claude will launch PyMOL (with the socket listener active) and load the structure.
+Claude will launch PyMOL (with the socket listener active) and load the structure.
 
 ## Usage
 
@@ -104,9 +94,8 @@ Claude Code has built-in skills for common workflows:
 
 ### Plugin Not Loading
 
-- Verify the path in your `~/.pymolrc` is correct
+- Run `claudemol setup` to configure PyMOL
 - Check PyMOL's output for any error messages on startup
-- Try running `run /path/to/claude_socket_plugin.py` manually in PyMOL
 
 ### First-Time Setup Help
 
@@ -117,9 +106,9 @@ Run the `/pymol-setup` skill in Claude Code for guided setup assistance.
 The default socket port is **9880**. Both the plugin and Claude Code connection module use this port.
 
 Key files:
-- `claude_socket_plugin.py` - PyMOL plugin (headless, auto-loads via pymolrc)
-- `pymol_connection.py` - Python module for socket communication
-- `.claude/skills/` - Claude Code skills for PyMOL workflows
+- `src/claudemol/plugin.py` - PyMOL plugin (auto-loads via pymolrc)
+- `src/claudemol/connection.py` - Python module for socket communication
+- `claude-plugin/skills/` - Claude Code skills for PyMOL workflows
 
 ## Limitations
 

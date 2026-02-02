@@ -14,11 +14,12 @@ import subprocess
 import time
 from pathlib import Path
 
-from pymol_connection import (
+from claudemol.connection import (
     DEFAULT_HOST,
     DEFAULT_PORT,
     PyMOLConnection,
     find_pymol_command,
+    get_plugin_path,
 )
 
 
@@ -98,7 +99,7 @@ class PyMOLSession:
         pymol_cmd = find_pymol_command()
         if not pymol_cmd:
             raise RuntimeError(
-                "PyMOL not found. Run /pymol-setup or install PyMOL."
+                "PyMOL not found. Run: claudemol setup"
             )
 
         # Check if plugin is configured in pymolrc (don't double-load)
@@ -106,13 +107,13 @@ class PyMOLSession:
         plugin_in_pymolrc = False
         if pymolrc_path.exists():
             content = pymolrc_path.read_text()
-            if "claude_socket_plugin" in content:
+            if "claude_socket_plugin" in content or "claudemol" in content:
                 plugin_in_pymolrc = True
 
         # Build command - only add plugin if not in pymolrc
         cmd_args = list(pymol_cmd)
         if not plugin_in_pymolrc:
-            plugin_path = Path(__file__).parent / "claude_socket_plugin.py"
+            plugin_path = get_plugin_path()
             if not plugin_path.exists():
                 raise RuntimeError(f"Plugin not found: {plugin_path}")
             cmd_args += ["-d", f"run {plugin_path}"]
@@ -250,7 +251,7 @@ class PyMOLSession:
 
             return self.connection.execute(code)
 
-        except (ConnectionError, TimeoutError) as e:
+        except (ConnectionError, TimeoutError):
             if auto_recover:
                 self.recover()
                 return self.connection.execute(code)
@@ -292,43 +293,3 @@ def stop_pymol():
     if _session:
         _session.stop()
         _session = None
-
-
-# CLI interface
-if __name__ == "__main__":
-    import sys
-
-    if len(sys.argv) > 1:
-        cmd = sys.argv[1]
-
-        if cmd == "start":
-            session = get_session()
-            session.start()
-            print(f"PyMOL started (PID: {session.process.pid if session.process else 'existing'})")
-
-        elif cmd == "stop":
-            session = get_session()
-            session.stop()
-            print("PyMOL stopped")
-
-        elif cmd == "status":
-            session = get_session()
-            print(f"Running: {session.is_running}")
-            print(f"Connected: {session.is_connected}")
-            print(f"Healthy: {session.is_healthy()}")
-
-        elif cmd == "ping":
-            session = ensure_running()
-            print("PyMOL is responsive" if session.is_healthy() else "PyMOL not responding")
-
-        elif cmd == "recover":
-            session = get_session()
-            session.recover()
-            print("Recovery complete")
-
-        else:
-            print(f"Unknown command: {cmd}")
-            print("Usage: python pymol_session.py [start|stop|status|ping|recover]")
-            sys.exit(1)
-    else:
-        print("Usage: python pymol_session.py [start|stop|status|ping|recover]")

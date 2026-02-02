@@ -10,26 +10,16 @@ Get Claude controlling PyMOL in 5 minutes.
 
 ## Setup
 
-### 1. Clone the Repository
+### 1. Install claudemol
 
 ```bash
-git clone https://github.com/ANaka/ai-mol
-cd ai-mol
+pip install claudemol
+claudemol setup
 ```
 
-### 2. Set Up the PyMOL Plugin
+### 2. Start Using It
 
-Add this line to your `~/.pymolrc` (create the file if it doesn't exist):
-
-```python
-run /path/to/ai-mol/claude_socket_plugin.py
-```
-
-Replace `/path/to/ai-mol` with the actual path where you cloned the repository.
-
-### 3. Start Using It
-
-Open Claude Code in the `ai-mol` directory:
+Open Claude Code:
 
 ```bash
 claude
@@ -74,9 +64,8 @@ Claude will launch PyMOL, connect to it, and load the structure.
 
 ### Plugin Not Loading
 
-1. Verify the path in `~/.pymolrc` is correct
+1. Run `claudemol setup` again
 2. Check PyMOL's output for errors on startup
-3. Try running `run /path/to/ai-mol/claude_socket_plugin.py` manually in PyMOL
 
 ### Need More Help?
 

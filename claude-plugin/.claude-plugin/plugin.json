@@ -1,0 +1,15 @@
+{
+  "name": "claudemol-skills",
+  "version": "0.1.0",
+  "description": "PyMOL visualization skills for Claude Code - molecular visualization workflows for structural biology",
+  "author": {
+    "name": "Alex Naka"
+  },
+  "repository": "https://github.com/ANaka/claudemol",
+  "keywords": [
+    "pymol",
+    "molecular-visualization",
+    "structural-biology",
+    "protein-structure"
+  ]
+}

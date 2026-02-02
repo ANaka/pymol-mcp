@@ -1,15 +1,16 @@
 # PyMOL + Claude Cookbook
 
-A task-oriented guide to what Claude can do with PyMOL through ai-mol.
+A task-oriented guide to what Claude can do with PyMOL through claudemol.
 
 ## Quick Start
 
 ### Connecting PyMOL to Claude
 
-1. Add the socket plugin to your `~/.pymolrc`: `run /path/to/ai-mol/claude_socket_plugin.py`
-2. Launch PyMOL - the plugin auto-starts
-3. In Claude Code, say "open PyMOL" or load a structure directly
-4. You're ready to go!
+1. Install claudemol: `pip install claudemol`
+2. Run setup: `claudemol setup`
+3. Launch PyMOL - the plugin auto-starts
+4. In Claude Code, say "open PyMOL" or load a structure directly
+5. You're ready to go!
 
 ### Your First Visualization
 
