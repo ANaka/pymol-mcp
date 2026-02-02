@@ -24,8 +24,8 @@ dependencies = []
 claudemol = "claudemol.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/ANaka/ai-mol"
-Repository = "https://github.com/ANaka/ai-mol"
+Homepage = "https://github.com/ANaka/claudemol"
+Repository = "https://github.com/ANaka/claudemol"
 
 [build-system]
 requires = ["hatchling"]
