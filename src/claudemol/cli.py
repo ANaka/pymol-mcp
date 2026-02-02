@@ -1,18 +1,17 @@
 """
-CLI for ai-mol setup and management.
+CLI for claudemol setup and management.
 
 Usage:
-    ai-mol setup    # Configure PyMOL to auto-load the socket plugin
-    ai-mol status   # Check if PyMOL is running and connected
-    ai-mol test     # Test the connection
+    claudemol setup    # Configure PyMOL to auto-load the socket plugin
+    claudemol status   # Check if PyMOL is running and connected
+    claudemol test     # Test the connection
 """
 
 import argparse
-import shutil
 import sys
 from pathlib import Path
 
-from ai_mol.connection import (
+from claudemol.connection import (
     PyMOLConnection,
     check_pymol_installed,
     find_pymol_command,
@@ -32,21 +31,21 @@ def setup_pymol():
     # Check if already configured
     if pymolrc_path.exists():
         content = pymolrc_path.read_text()
-        if "ai_mol" in content or "claude_socket_plugin" in content:
-            print("PyMOL already configured for ai-mol.")
+        if "claudemol" in content or "claude_socket_plugin" in content:
+            print("PyMOL already configured for claudemol.")
             print(f"Plugin: {plugin_path}")
             return 0
 
     # Add to .pymolrc
-    run_command = f'\n# ai-mol: Claude Code integration\nrun {plugin_path}\n'
+    run_command = f'\n# claudemol: Claude Code integration\nrun {plugin_path}\n'
 
     if pymolrc_path.exists():
         with open(pymolrc_path, "a") as f:
             f.write(run_command)
-        print(f"Added ai-mol plugin to existing {pymolrc_path}")
+        print(f"Added claudemol plugin to existing {pymolrc_path}")
     else:
         pymolrc_path.write_text(run_command.lstrip())
-        print(f"Created {pymolrc_path} with ai-mol plugin")
+        print(f"Created {pymolrc_path} with claudemol plugin")
 
     print(f"Plugin path: {plugin_path}")
     print("\nSetup complete! The plugin will auto-load when you start PyMOL.")
@@ -92,8 +91,8 @@ def test_connection():
     conn = PyMOLConnection()
     try:
         conn.connect(timeout=2.0)
-        result = conn.execute("print('ai-mol connection test')")
-        print(f"Connection test: OK")
+        result = conn.execute("print('claudemol connection test')")
+        print("Connection test: OK")
         print(f"Response: {result}")
         conn.disconnect()
         return 0
@@ -108,11 +107,11 @@ def test_connection():
 
 
 def show_info():
-    """Show ai-mol installation info."""
+    """Show claudemol installation info."""
     plugin_path = get_plugin_path()
     pymolrc_path = Path.home() / ".pymolrc"
 
-    print("ai-mol installation info:")
+    print("claudemol installation info:")
     print(f"  Plugin: {plugin_path}")
     print(f"  Plugin exists: {plugin_path.exists()}")
     print(f"  .pymolrc: {pymolrc_path}")
@@ -120,7 +119,7 @@ def show_info():
 
     if pymolrc_path.exists():
         content = pymolrc_path.read_text()
-        configured = "ai_mol" in content or "claude_socket_plugin" in content
+        configured = "claudemol" in content or "claude_socket_plugin" in content
         print(f"  Configured in .pymolrc: {configured}")
 
     pymol_cmd = find_pymol_command()
@@ -129,7 +128,7 @@ def show_info():
 
 def main():
     parser = argparse.ArgumentParser(
-        description="ai-mol: PyMOL integration for Claude Code",
+        description="claudemol: PyMOL integration for Claude Code",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Commands:
@@ -138,9 +137,9 @@ Commands:
   test      Test the connection with a simple command
   info      Show installation info
 
-For Claude Code skills, install the ai-mol-skills plugin:
-  /plugin marketplace add <repo>
-  /plugin install ai-mol-skills
+For Claude Code skills, install the claudemol-skills plugin:
+  /plugin marketplace add ANaka/ai-mol?path=claude-plugin
+  /plugin install claudemol-skills
 """,
     )
     parser.add_argument(

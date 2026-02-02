@@ -14,7 +14,7 @@ import subprocess
 import time
 from pathlib import Path
 
-from ai_mol.connection import (
+from claudemol.connection import (
     DEFAULT_HOST,
     DEFAULT_PORT,
     PyMOLConnection,
@@ -99,7 +99,7 @@ class PyMOLSession:
         pymol_cmd = find_pymol_command()
         if not pymol_cmd:
             raise RuntimeError(
-                "PyMOL not found. Run: ai-mol setup"
+                "PyMOL not found. Run: claudemol setup"
             )
 
         # Check if plugin is configured in pymolrc (don't double-load)
@@ -107,7 +107,7 @@ class PyMOLSession:
         plugin_in_pymolrc = False
         if pymolrc_path.exists():
             content = pymolrc_path.read_text()
-            if "claude_socket_plugin" in content or "ai_mol" in content:
+            if "claude_socket_plugin" in content or "claudemol" in content:
                 plugin_in_pymolrc = True
 
         # Build command - only add plugin if not in pymolrc

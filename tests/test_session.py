@@ -15,7 +15,7 @@ import pytest
 # Add src directory to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"))
 
-from ai_mol.session import PyMOLSession
+from claudemol.session import PyMOLSession
 
 
 @pytest.fixture

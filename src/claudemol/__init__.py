@@ -1,17 +1,17 @@
 """
-ai-mol: PyMOL integration for Claude Code
+claudemol: PyMOL integration for Claude Code
 
 Connect to PyMOL via socket for AI-assisted molecular visualization.
 """
 
-from ai_mol.connection import (
+from claudemol.connection import (
     PyMOLConnection,
     connect_or_launch,
     launch_pymol,
     find_pymol_command,
     check_pymol_installed,
 )
-from ai_mol.session import (
+from claudemol.session import (
     PyMOLSession,
     get_session,
     ensure_running,
