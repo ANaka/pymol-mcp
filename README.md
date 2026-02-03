@@ -2,8 +2,6 @@
 
 Control PyMOL through natural language using Claude Code. This integration enables conversational structural biology, molecular visualization, and analysis.
 
-https://github.com/user-attachments/assets/687f43dc-d45e-477e-ac2b-7438e175cb36
-
 ## Features
 
 - **Natural language control**: Tell Claude what you want to visualize and it executes PyMOL commands
